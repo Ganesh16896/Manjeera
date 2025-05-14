@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -78,8 +79,9 @@ const Home = () => {
 
   return (
     <div className="p-4">
-      <div className="flex gap-3 mb-4">
+      <div className="flex  items-center gap-3 mb-4">
         <div>
+          <label>Start</label> <br />
           <input
             placeholder="Start Date"
             value={fromdt}
@@ -89,6 +91,9 @@ const Home = () => {
           />
         </div>
         <div>
+          <label>end</label>
+          <br />
+
           <input
             placeholder="end Date"
             value={todt}
@@ -98,15 +103,18 @@ const Home = () => {
           />
         </div>
         <div>
+          <label>Country Search</label>
+          <br />
           <input
-            placeholder="Search Venue"
+            placeholder="Search here"
             type="text"
             value={searchname}
             className="border-2 rounded-xl p-1"
             onChange={(e) => setSearchname(e.target.value)}
           />
         </div>
-        <button onClick={applyFilters} className="border-2 px-4 rounded">
+
+        <button onClick={applyFilters} className="border-2 px-4 py-2 rounded">
           Apply Filter
         </button>
       </div>
@@ -184,4 +192,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default dynamic(() => Promise.resolve(Home), { ssr: false });
