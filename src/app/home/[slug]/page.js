@@ -7,22 +7,27 @@ const Page = () => {
   //   const search = searchParams.get("id");
   //   console.log(search);
 
-  //   const getdata = useParams("dataid");
+  const getdata = useParams("dataid");
 
-  //   console.log(getdata.slug);
+  console.log(getdata.slug);
 
-  const getdata = JSON.parse(localStorage.getItem("dataid"));
+  //   const getdata = JSON.parse(localStorage.getItem("dataid"));
+  const alldata = JSON.parse(localStorage.getItem("Alldata"));
 
-  console.log(getdata);
+  const fliterdate = alldata.filter((res) => res.id === getdata.slug);
+
+  console.log(fliterdate);
 
   return (
     <div>
       <div className="p-10 ">
         <div className="p-2 border-2">
-          <p>{`name : ${getdata?.name}`}</p>
-          <p>{`Description : ${getdata?.promoter?.description}`}</p>
-          <p>{`date & time : ${getdata?.dates?.start?.dateTim || "---"}`}</p>
-          <p>{`location : ${getdata?._embedded?.venues[0]?.name}`}</p>
+          <p>{`name : ${fliterdate[0]?.name}`}</p>
+          <p>{`Description : ${fliterdate[0]?.promoter?.description}`}</p>
+          <p>{`date & time : ${
+            fliterdate[0]?.dates?.start?.dateTim || "---"
+          }`}</p>
+          <p>{`location : ${fliterdate[0]?._embedded?.venues[0]?.name}`}</p>
         </div>
       </div>
     </div>

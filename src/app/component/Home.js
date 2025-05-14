@@ -20,6 +20,8 @@ const Home = () => {
         "https://app.ticketmaster.com/discovery/v2/events?apikey=ZQpAm1jeTmh4lKrx7K8ihYylvLMZdte5"
       );
       const events = res?.data?._embedded?.events || [];
+      localStorage.setItem("Alldata", JSON.stringify(events));
+
       setOriginalData(events);
       setFilteredData(events);
     } catch (err) {
