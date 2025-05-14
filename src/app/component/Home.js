@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 const Home = () => {
   const [originalData, setOriginalData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [daterang, setDaterang] = useState("");
   const [searchname, setSearchname] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,21 +29,29 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    HandleGetDate();
-  }, []);
-
   const handlepass = (data) => {
     localStorage.setItem("dataid", JSON.stringify(data));
     router.push(`home/${data.id}`);
   };
 
+  const [fromdt, setFromdt] = useState("");
+  const [todt, settodt] = useState("");
+
   const applyFilters = () => {
     const filtered = originalData.filter((event) => {
-      const eventDate = event.dates?.start?.dateTime?.split("T")[0];
+      const eventDateStr = event.dates?.start?.dateTime;
       const venueName = event._embedded?.venues?.[0]?.name?.toLowerCase() || "";
 
-      const matchesDate = !daterang || eventDate === daterang;
+      const eventDate = eventDateStr
+        ? new Date(eventDateStr.split("T")[0])
+        : null;
+      const fromDate = fromdt ? new Date(fromdt) : null;
+      const toDate = todt ? new Date(todt) : null;
+
+      const matchesDate =
+        (!fromDate || eventDate >= fromDate) &&
+        (!toDate || eventDate <= toDate);
+
       const matchesName =
         !searchname || venueName.includes(searchname.toLowerCase());
 
@@ -52,12 +59,20 @@ const Home = () => {
     });
 
     setFilteredData(filtered);
-    setCurrentPage(1); // reset to page 1 on new filter
+    setCurrentPage(1);
   };
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredData.slice(indexOfFirstEvent, indexOfLastEvent);
+
+  //   useEffect(() => {
+  //     HandleGetDate();
+  //   }, [searchname, todt, fromdt]);
+
+  useEffect(() => {
+    HandleGetDate();
+  }, []);
 
   return (
     <div className="p-4">
@@ -65,10 +80,19 @@ const Home = () => {
         <div>
           <input
             placeholder="Start Date"
-            value={daterang}
+            value={fromdt}
             type="date"
             className="border-2 rounded-xl p-1"
-            onChange={(e) => setDaterang(e.target.value)}
+            onChange={(e) => setFromdt(e.target.value)}
+          />
+        </div>
+        <div>
+          <input
+            placeholder="end Date"
+            value={todt}
+            type="date"
+            className="border-2 rounded-xl p-1"
+            onChange={(e) => settodt(e.target.value)}
           />
         </div>
         <div>
@@ -100,26 +124,33 @@ const Home = () => {
               </tr>
             </thead>
             <tbody>
-              {currentEvents.map((res, i) => (
-                <tr key={i} className="text-center">
-                  <td className="border p-2">{res.name}</td>
-                  <td className="border p-2">
-                    {res.promoter?.description || "-"}
-                  </td>
-                  <td className="border p-2">{res.dates?.start?.dateTime}</td>
-                  <td className="border p-2">
-                    {res._embedded?.venues?.[0]?.name || "-"}
-                  </td>
-                  <td className="border p-2">
-                    <button
-                      onClick={() => handlepass(res)}
-                      className=" px-3 py-1 "
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {currentEvents
+                ?.slice()
+                .sort(
+                  (a, b) =>
+                    new Date(a.dates?.start?.dateTime) -
+                    new Date(b.dates?.start?.dateTime)
+                )
+                .map((res, i) => (
+                  <tr key={i} className="text-center">
+                    <td className="border p-2">{res.name}</td>
+                    <td className="border p-2">
+                      {res.promoter?.description || "-"}
+                    </td>
+                    <td className="border p-2">{res.dates?.start?.dateTime}</td>
+                    <td className="border p-2">
+                      {res._embedded?.venues?.[0]?.name || "-"}
+                    </td>
+                    <td className="border p-2">
+                      <button
+                        onClick={() => handlepass(res)}
+                        className=" px-3 py-1 "
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               {currentEvents.length === 0 && (
                 <tr>
                   <td colSpan={5} className="text-center py-4 text-gray-500">
