@@ -38,6 +38,7 @@ const page = () => {
   const fetchTypes = async () => {
     try {
       const data = await axios.get("https://pokeapi.co/api/v2/type/");
+      console.log(data);
       setTypes(data?.data?.results);
     } catch (error) {
       console.error("Error fetching types:", error);
@@ -87,7 +88,7 @@ const page = () => {
           style={{
             padding: "8px",
           }}
-          className=" border border-[#ccc] rounded text-base"
+          className=" border w-[150px] border-[#ccc] rounded text-base"
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
         >

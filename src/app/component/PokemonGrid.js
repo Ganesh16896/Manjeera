@@ -3,9 +3,6 @@ import Link from "next/link";
 
 export default function PokemonGrid({ pokemonList }) {
   console.log(pokemonList, "pokemonList");
-  if (pokemonList.length === 0) {
-    return <p>No Pokémon found matching your criteria.</p>;
-  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-4 ">
@@ -13,7 +10,7 @@ export default function PokemonGrid({ pokemonList }) {
         <Link
           key={pokemon.id}
           href={`/${pokemon.name}`}
-          className="border border-gray-300 rounded-lg overflow-hidden bg-white transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
+          className="border border-gray-300 rounded-lg overflow-hidden bg-white transition-transform duration-200 hover:shadow-lg"
         >
           <div className="w-full aspect-square flex items-center justify-center bg-gray-100">
             <img
